@@ -2,13 +2,18 @@
 
 
 // Draw things inputted
-void RenderManager::Draw(RenderWindow* _window, Map* _currentMap)
+void RenderManager::Draw(RenderWindow* _window, Map* _currentMap, Player* _player)
 {
 	for (int i = 0; i < _currentMap->tiles.size(); i++)
 	{
 		_window->draw(*_currentMap->tiles[i]);
 	}
 
+	_window->draw(*_player);
+	for (int i = 0; i < _player->m_bullets.size(); i++)
+	{
+		_window->draw(*_player->m_bullets[i]);
+	}
 }
 
 

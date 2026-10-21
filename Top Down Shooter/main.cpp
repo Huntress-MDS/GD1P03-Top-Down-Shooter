@@ -3,17 +3,21 @@
 #include "MapLoader.h"
 #include "RenderManager.h"
 #include "Player.h"
+#include "Enemy.h"
+#include "Bullet.h"
 using namespace sf;
 
 
 // Variables
 float cameraSpeed = 4.5f;
 float cameraMoveBoxSize = 50.0f;
-// Arrays
+// Arrays and vectors
 std::string mapArray[1]
 {
 	"Maps/Map1.txt"
 };
+std::vector<Enemy*> enemies;
+std::vector<Entity*> enemyBullets;
 // Objects
 Player* player = nullptr;
 RenderManager renderer;
@@ -31,6 +35,9 @@ int main()
 	View camera(sf::FloatRect({ 0.f, 0.f }, { 800.0f, 600.0f }));
 
 	player = new Player(&window, map);
+	enemies.push_back(new Enemy(&window, map, player, { 100.0f, 100.0f }, &enemyBullets));
+	enemies.push_back(new Enemy(&window, map, player, { -100.0f, -100.0f }, &enemyBullets));
+
 	camera.zoom(1.2f);
 	window.setView(camera);
 	window.setFramerateLimit(60);
@@ -54,7 +61,7 @@ int main()
 		RunUpdates(&window, &camera);
 
 		// Render all level related stuff
-		renderer.Draw(&window, map, player);
+		renderer.Draw(&window, map, player, &enemies, &enemyBullets);
 
 		// Display the rendered stuff to the window
 		window.display();
@@ -67,6 +74,34 @@ int main()
 void RunUpdates(RenderWindow* _window, View* _camera)
 {
 	player->Update();
+
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		enemies[i]->Update();
+
+		for (int j = 0; j < player->m_bullets.size(); j++)
+		{
+			enemies[i]->Collide(player->m_bullets[j]);
+		}
+
+		if (enemies[i]->CheckIfQueuedForDeletion())
+		{
+			Entity* _tempPointer = enemies[i];
+			enemies.erase(enemies.begin() + i);
+			delete _tempPointer;
+		}
+	}
+
+	for (int i = 0; i < enemyBullets.size(); i++)
+	{
+		enemyBullets[i]->Update();
+		enemyBullets[i]->Collide(player);
+
+		if (enemyBullets[i]->CheckIfQueuedForDeletion())
+		{
+			enemyBullets.erase(enemyBullets.begin() + i);
+		}
+	}
 
 	for (int i = 0; i < player->m_bullets.size(); i++)
 	{

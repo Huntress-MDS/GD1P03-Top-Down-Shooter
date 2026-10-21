@@ -17,7 +17,10 @@ public:
 	virtual void Update() = 0;
 	virtual void Move() = 0;
 	bool Collide(std::vector<Tile*>* _collisionVector, MOVE_DIRECTION _direction);
-	void RotateTowardsPosition(Vector2f _position);
+	bool Collide(Entity* _entity);
+	void RotateTowardsPosition(Vector2f _position, bool _worldSpace = false);
+	bool CheckIfPointInAreaX(float _point);
+	bool CheckIfPointInAreaY(float _point);
 	bool CheckIfQueuedForDeletion() { return m_queuedForDeletion; }
 protected:
 	Map* m_mapPointer;

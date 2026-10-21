@@ -3,13 +3,14 @@
 #include <vector>
 #include "Map.h"
 #include "Player.h"
+#include "Enemy.h"
 using namespace sf;
 
 
 class RenderManager
 {
 public:
-	void Draw(RenderWindow* _window, Map* _currentMap, Player* _player);
+	void Draw(RenderWindow* _window, Map* _currentMap, Player* _player, std::vector<Enemy*>* _enemies, std::vector<Entity*>* _bullets);
 	//void Draw(RenderWindow* _window, std::vector<Button*>* _buttons);
 };
 

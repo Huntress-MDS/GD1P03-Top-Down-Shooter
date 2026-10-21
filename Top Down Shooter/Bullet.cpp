@@ -1,7 +1,7 @@
 #include "Bullet.h"
 
 
-Bullet::Bullet(Map* _mapPointer, Angle _direction, Vector2f _startPosition, Vector2f _size)
+Bullet::Bullet(Map* _mapPointer, Angle _direction, Vector2f _startPosition, Vector2f _size, bool _friendly) : m_isFriendly(_friendly)
 {
 	m_mapPointer = _mapPointer;
 	m_direction = _direction;

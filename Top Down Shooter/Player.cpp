@@ -33,7 +33,7 @@ void Player::CheckForActions()
 {
 	if (Mouse::isButtonPressed(Mouse::Button::Left) && m_canShoot)
 	{
-		m_bullets.push_back(new Bullet(m_mapPointer, m_lookDirection, m_position, {16, 16}));
+		m_bullets.push_back(new Bullet(m_mapPointer, m_lookDirection, m_position, {16, 16}, true));
 		m_canShoot = false;
 	}
 	else if (!Mouse::isButtonPressed(Mouse::Button::Left))

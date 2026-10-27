@@ -27,4 +27,5 @@ protected:
 	bool m_inDetectionRadius = false;
 	float m_detectionRadius = 200.0f;
 	float m_stopRadius = 125.0f;
+	float m_cooldown = 5.0f;
 };

@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Bullet.h"
+#include <iostream>
 
 
 Enemy::Enemy(RenderWindow* _windowPointer, Map* _mapPointer, Entity* _playerPointer, Vector2f _pos, std::vector<Entity*>* _bullets)
@@ -42,7 +43,7 @@ void Enemy::Update()
 
 void Enemy::DoActions()
 {
-	if (m_shootTimer.getElapsedTime().asSeconds() > 5.0f && m_inDetectionRadius)
+	if (m_shootTimer.getElapsedTime().asSeconds() > m_cooldown && m_inDetectionRadius)
 	{
 		_bulletArrayPointer->push_back(new Bullet(m_mapPointer, m_lookDirection, m_position, { 16, 16 }, false));
 		m_shootTimer.restart();
@@ -145,6 +146,18 @@ void Enemy::Move()
 	else
 	{
 		m_inDetectionRadius = false;
+	}
+
+	// stop the enemy when at the border and make shoot faster
+	if (((int)(m_position.y - m_playerPointer->getPosition().y) == m_stopRadius || (int)(m_position.y - m_playerPointer->getPosition().y) == -m_stopRadius) || ((int)(m_position.x - m_playerPointer->getPosition().x) == m_stopRadius || (int)(m_position.x - m_playerPointer->getPosition().x) == -m_stopRadius))
+	{
+		directionVector.x = 0;
+		directionVector.y = 0;
+		m_cooldown = 1.5f;
+	}
+	else
+	{
+		m_cooldown = 3.0f;
 	}
 
 	// Normalize the vector

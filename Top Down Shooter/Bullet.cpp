@@ -7,8 +7,9 @@ Bullet::Bullet(Map* _mapPointer, Angle _direction, Vector2f _startPosition, Vect
 	m_direction = _direction;
 	m_position = _startPosition;
 	m_size = _size;
-	m_speed = 10.0f;
+	m_speed = 8.0f;
 	m_hitbox = { m_size.x / 2, m_size.y / 2 };
+	m_hurtbox = { m_size.x, m_size.y };
 
 	setSize(m_size);
 	setOrigin({ m_size.x / 2, m_size.y / 2 });

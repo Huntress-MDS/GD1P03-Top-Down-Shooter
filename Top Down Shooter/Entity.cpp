@@ -59,29 +59,32 @@ bool Entity::Collide(std::vector<Tile*>* _collisionVector, MOVE_DIRECTION _direc
 bool Entity::Collide(Entity* _entity)
 {
     // Simpler code where it just checks the corner positions of the two entities hurtboxes and kills one of them based on where they collide
-    if (_entity->CheckIfPointInAreaX(m_position.x + m_hurtbox.x) && _entity->CheckIfPointInAreaY(m_position.y + m_hurtbox.y))
+    if (!_entity->m_invincible)
     {
-        m_queuedForDeletion = true;
-        _entity->m_queuedForDeletion = true;
-        return true;
-    }
-    else if (_entity->CheckIfPointInAreaX(m_position.x - m_hurtbox.x) && _entity->CheckIfPointInAreaY(m_position.y + m_hurtbox.y))
-    {
-        m_queuedForDeletion = true;
-        _entity->m_queuedForDeletion = true;
-        return true;
-    }
-    else if (_entity->CheckIfPointInAreaX(m_position.x + m_hurtbox.x) && _entity->CheckIfPointInAreaY(m_position.y - m_hurtbox.y))
-    {
-        m_queuedForDeletion = true;
-        _entity->m_queuedForDeletion = true;
-        return true;
-    }
-    else if (_entity->CheckIfPointInAreaX(m_position.x - m_hurtbox.x) && _entity->CheckIfPointInAreaY(m_position.y - m_hurtbox.y))
-    {
-        m_queuedForDeletion = true;
-        _entity->m_queuedForDeletion = true;
-        return true;
+        if (_entity->CheckIfPointInAreaX(m_position.x + m_hurtbox.x, true) && _entity->CheckIfPointInAreaY(m_position.y + m_hurtbox.y, true))
+        {
+            m_queuedForDeletion = true;
+            _entity->m_queuedForDeletion = true;
+            return true;
+        }
+        else if (_entity->CheckIfPointInAreaX(m_position.x - m_hurtbox.x, true) && _entity->CheckIfPointInAreaY(m_position.y + m_hurtbox.y, true))
+        {
+            m_queuedForDeletion = true;
+            _entity->m_queuedForDeletion = true;
+            return true;
+        }
+        else if (_entity->CheckIfPointInAreaX(m_position.x + m_hurtbox.x, true) && _entity->CheckIfPointInAreaY(m_position.y - m_hurtbox.y, true))
+        {
+            m_queuedForDeletion = true;
+            _entity->m_queuedForDeletion = true;
+            return true;
+        }
+        else if (_entity->CheckIfPointInAreaX(m_position.x - m_hurtbox.x, true) && _entity->CheckIfPointInAreaY(m_position.y - m_hurtbox.y, true))
+        {
+            m_queuedForDeletion = true;
+            _entity->m_queuedForDeletion = true;
+            return true;
+        }
     }
 
     return false;
@@ -96,6 +99,7 @@ bool Entity::CheckCollidingTile(std::vector<Tile*>* _collisionVector, int _i)
     }
     else if (_collisionVector->at(_i)->GetTileType() == "Goal")
     {
+        m_levelComplete = true;
         return false;
     }
 }
@@ -115,9 +119,11 @@ void Entity::RotateTowardsPosition(Vector2f _position, bool _worldSpace)
 
 
 // Do math to check if a point is within the tile's x position and size
-bool Entity::CheckIfPointInAreaX(float _point)
+bool Entity::CheckIfPointInAreaX(float _point, bool _hurtbox)
 {
-    if (_point > getPosition().x && _point < getPosition().x + getSize().x)
+    Vector2f area = _hurtbox ? m_hurtbox : m_hitbox;
+
+    if (_point > getPosition().x - area.x && _point < getPosition().x + area.x)
     {
         return true;
     }
@@ -127,9 +133,11 @@ bool Entity::CheckIfPointInAreaX(float _point)
 
 
 // Do math to check if a point is within the tile's y position and size
-bool Entity::CheckIfPointInAreaY(float _point)
+bool Entity::CheckIfPointInAreaY(float _point, bool _hurtbox)
 {
-    if (_point > getPosition().y && _point < getPosition().y + getSize().y)
+    Vector2f area = _hurtbox ? m_hurtbox : m_hitbox;
+
+    if (_point > getPosition().y - area.y && _point < getPosition().y + area.y)
     {
         return true;
     }

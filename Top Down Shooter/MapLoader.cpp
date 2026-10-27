@@ -30,6 +30,8 @@ Map* MapLoader::LoadLevel(std::string _filePath, std::vector<Enemy*>* _enemies, 
 		loadFileStream.close();
 	}
 
+	map->tiles.clear();
+
 	// A nested for loop to create tiles and add them to a vector
 	// each tile is different based on the character in the array
 	for (int y = 0; y < map->m_mapHeight; y++)

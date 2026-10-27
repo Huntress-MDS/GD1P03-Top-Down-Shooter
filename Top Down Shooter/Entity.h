@@ -7,6 +7,7 @@ using namespace sf;
 class Entity : public RectangleShape
 {
 public:
+	bool m_levelComplete = false;
 	enum MOVE_DIRECTION
 	{
 		UP,
@@ -20,8 +21,8 @@ public:
 	bool Collide(Entity* _entity);
 	bool CheckCollidingTile(std::vector<Tile*>* _collisionVector, int _i);
 	void RotateTowardsPosition(Vector2f _position, bool _worldSpace = false);
-	bool CheckIfPointInAreaX(float _point);
-	bool CheckIfPointInAreaY(float _point);
+	bool CheckIfPointInAreaX(float _point, bool _hurtbox = false);
+	bool CheckIfPointInAreaY(float _point, bool _hurtbox = false);
 	bool CheckIfQueuedForDeletion() { return m_queuedForDeletion; }
 	void OveridePosition(Vector2f _pos) { m_position = _pos; }
 	void ToggleInvincible() { m_invincible = !m_invincible; }

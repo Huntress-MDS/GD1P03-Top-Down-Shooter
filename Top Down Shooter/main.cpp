@@ -16,7 +16,7 @@ const int mapAmout = 2;
 int currentMap = -1;
 float cameraSpeed = 4.5f;
 float cameraMoveBoxSize = 50.0f;
-bool inDebugMode = true;
+bool inDebugMode = false;
 bool isDebugWindowOpen = false;
 
 // Arrays and vectors
@@ -44,6 +44,7 @@ void UpdateCamera(View* _camera);
 void CheckAdditionalInputs();
 void RunUpdates(RenderWindow* _window, View* _camera);
 void LoadNextLevel();
+void ReloadLevel();
 void SetupDebugWindow(RenderWindow* _window);
 // Debug Functions
 void DebugToggleDebugView() { inDebugMode = !inDebugMode; }
@@ -112,6 +113,11 @@ void RunUpdates(RenderWindow* _window, View* _camera)
 {
 	player->Update();
 
+	if (player->m_levelComplete)
+	{
+		LoadNextLevel();
+	}
+
 	// enemy updates
 	for (int i = 0; i < enemies.size(); i++)
 	{
@@ -137,7 +143,10 @@ void RunUpdates(RenderWindow* _window, View* _camera)
 	{
 		// Update and check for collision with player
 		enemyBullets[i]->Update();
-		enemyBullets[i]->Collide(player);
+		if (enemyBullets[i]->Collide(player))
+		{
+			ReloadLevel();
+		}
 
 		// Delete when needed
 		if (enemyBullets[i]->CheckIfQueuedForDeletion())
@@ -169,7 +178,22 @@ void RunUpdates(RenderWindow* _window, View* _camera)
 
 void LoadNextLevel()
 {
+	player->m_levelComplete = false;
+	enemies.clear();
+
 	currentMap++;
+	if (currentMap < mapAmout)
+	{
+		map = mapLoader.LoadLevel(mapArray[currentMap], &enemies, mainWindow, player, &enemyBullets);
+		player->SetMapPointer(map);
+	}
+}
+
+
+void ReloadLevel()
+{
+	enemies.clear();
+
 	if (currentMap < mapAmout)
 	{
 		map = mapLoader.LoadLevel(mapArray[currentMap], &enemies, mainWindow, player, &enemyBullets);

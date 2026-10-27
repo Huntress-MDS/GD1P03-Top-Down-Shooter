@@ -8,7 +8,7 @@ Player::Player(RenderWindow* _windowPointer)
 	m_size = { 32, 32 };
 	m_hitbox = { 16, 16 };
 	m_hitboxResizer = 5;
-	m_hurtbox = { 8, 8 };
+	m_hurtbox = { 16, 16 };
 	m_windowPointer = _windowPointer;
 
 	setSize(m_size);

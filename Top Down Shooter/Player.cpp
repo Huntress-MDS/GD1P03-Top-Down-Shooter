@@ -2,7 +2,7 @@
 #include "Bullet.h"
 
 
-Player::Player(RenderWindow* _windowPointer, Map* _mapPointer)
+Player::Player(RenderWindow* _windowPointer)
 {
 	m_speed = 5.0f;
 	m_size = { 32, 32 };
@@ -10,7 +10,6 @@ Player::Player(RenderWindow* _windowPointer, Map* _mapPointer)
 	m_hitboxResizer = 5;
 	m_hurtbox = { 8, 8 };
 	m_windowPointer = _windowPointer;
-	m_mapPointer = _mapPointer;
 
 	setSize(m_size);
 	setOrigin({ m_size.x / 2, m_size.y / 2 });

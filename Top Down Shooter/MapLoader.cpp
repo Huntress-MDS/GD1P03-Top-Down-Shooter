@@ -4,7 +4,7 @@
 
 
 // function for loading the level from a string
-Map* MapLoader::LoadLevel(std::string _filePath)
+Map* MapLoader::LoadLevel(std::string _filePath, std::vector<Enemy*>* _enemies, RenderWindow* _window, Entity* _player, std::vector<Entity*>* _bullets)
 {
 	std::fstream loadFileStream;
 	Map* map = new Map();
@@ -43,6 +43,12 @@ Map* MapLoader::LoadLevel(std::string _filePath)
 				// Spawn bocks
 				Tile* newBox = new Tile("Ground", m_tileSize, Vector2f(float(x), float(y)));
 				map->tiles.push_back(newBox);
+			}
+			else if (map->m_mapArray[x][y] == 'e')
+			{
+				// Spawn Enemies
+				Enemy* newEnemy = new Enemy(_window, map, _player, { float(x * m_tileSize), float(y * m_tileSize) }, _bullets);
+				_enemies->push_back(newEnemy);
 			}
 		}
 	}

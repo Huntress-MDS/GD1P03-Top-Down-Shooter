@@ -2,7 +2,7 @@
 
 
 // Draw things inputted
-void RenderManager::Draw(RenderWindow* _window, Map* _currentMap, Player* _player, std::vector<Enemy*>* _enemies, std::vector<Entity*>* _bullets)
+void RenderManager::Draw(RenderWindow* _window, Map* _currentMap, Player* _player, std::vector<Enemy*>* _enemies, std::vector<Entity*>* _bullets, bool _inDebugMode)
 {
 	for (int i = 0; i < _currentMap->tiles.size(); i++)
 	{
@@ -14,6 +14,11 @@ void RenderManager::Draw(RenderWindow* _window, Map* _currentMap, Player* _playe
 	for (int i = 0; i < _enemies->size(); i++)
 	{
 		_window->draw(*_enemies->at(i));
+
+		if (_inDebugMode)
+		{
+			_window->draw(_enemies->at(i)->m_debugDectionArea);
+		}
 	}
 
 	for (int i = 0; i < _bullets->size(); i++)

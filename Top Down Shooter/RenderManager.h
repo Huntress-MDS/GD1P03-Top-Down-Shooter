@@ -10,7 +10,7 @@ using namespace sf;
 class RenderManager
 {
 public:
-	void Draw(RenderWindow* _window, Map* _currentMap, Player* _player, std::vector<Enemy*>* _enemies, std::vector<Entity*>* _bullets);
+	void Draw(RenderWindow* _window, Map* _currentMap, Player* _player, std::vector<Enemy*>* _enemies, std::vector<Entity*>* _bullets, bool _inDebugMode);
 	//void Draw(RenderWindow* _window, std::vector<Button*>* _buttons);
 };
 

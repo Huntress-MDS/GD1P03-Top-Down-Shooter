@@ -11,6 +11,7 @@ using namespace sf;
 // Variables
 float cameraSpeed = 4.5f;
 float cameraMoveBoxSize = 50.0f;
+bool inDebugMode = true;
 // Arrays and vectors
 std::string mapArray[1]
 {
@@ -20,9 +21,10 @@ std::vector<Enemy*> enemies;
 std::vector<Entity*> enemyBullets;
 // Objects
 Player* player = nullptr;
+RenderWindow* mainWindow;
 RenderManager renderer;
 MapLoader mapLoader;
-Map* map = mapLoader.LoadLevel(mapArray[0]);
+Map* map = nullptr;
 // Functions
 void UpdateCamera(View* _camera);
 void RunUpdates(RenderWindow* _window, View* _camera);
@@ -31,40 +33,40 @@ void RunUpdates(RenderWindow* _window, View* _camera);
 int main()
 {
 	// Create the main window
-	RenderWindow window(sf::VideoMode({ 800, 600 }), "SFML window");
+	mainWindow = new RenderWindow(sf::VideoMode({ 800, 600 }), "SFML window");
 	View camera(sf::FloatRect({ 0.f, 0.f }, { 800.0f, 600.0f }));
 
-	player = new Player(&window, map);
-	enemies.push_back(new Enemy(&window, map, player, { 100.0f, 100.0f }, &enemyBullets));
-	enemies.push_back(new Enemy(&window, map, player, { -100.0f, -100.0f }, &enemyBullets));
+	player = new Player(mainWindow);
+	map = mapLoader.LoadLevel(mapArray[0], &enemies, mainWindow, player, &enemyBullets);
+	player->SetMapPointer(map);
 
 	camera.zoom(1.2f);
-	window.setView(camera);
-	window.setFramerateLimit(60);
+	mainWindow->setView(camera);
+	mainWindow->setFramerateLimit(60);
 
-	while (window.isOpen())
+	while (mainWindow->isOpen())
 	{
 		// Checks for events related to the main window
-		while (const std::optional event = window.pollEvent())
+		while (const std::optional event = mainWindow->pollEvent())
 		{
 			// Close window when the 'close window' button pressed
 			if (event->is<sf::Event::Closed>())
 			{
-				window.close();
+				mainWindow->close();
 			}
 		}
 
 		// Clear the window
-		window.clear();
+		mainWindow->clear();
 
 		// Do Update Loops
-		RunUpdates(&window, &camera);
+		RunUpdates(mainWindow, &camera);
 
 		// Render all level related stuff
-		renderer.Draw(&window, map, player, &enemies, &enemyBullets);
+		renderer.Draw(mainWindow, map, player, &enemies, &enemyBullets, inDebugMode);
 
 		// Display the rendered stuff to the window
-		window.display();
+		mainWindow->display();
 	}
 
 	return 0;

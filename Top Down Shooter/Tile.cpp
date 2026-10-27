@@ -9,6 +9,10 @@ Tile::Tile(std::string _type, float _tileSize, Vector2f _position) : m_tileType(
 	{
 		setFillColor(sf::Color::Blue);
 	}
+	else if (m_tileType == "Goal")
+	{
+		setFillColor(sf::Color::Green);
+	}
 	else if (m_tileType == "Pit")
 	{
 		setFillColor(sf::Color::Black);

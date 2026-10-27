@@ -156,3 +156,10 @@ void Enemy::Move()
 
 	RotateTowardsPosition(m_playerPointer->getPosition(), true);
 }
+
+
+void Enemy::CheckRaycast()
+{
+	m_raycast.point1.position = m_position;
+	m_raycast.point2.position = m_playerPointer->getPosition();
+}

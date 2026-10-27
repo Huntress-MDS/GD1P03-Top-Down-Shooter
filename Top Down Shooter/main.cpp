@@ -5,40 +5,62 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Bullet.h"
+#include "Button.h"
 using namespace sf;
 
 
+// Constants
+const int mapAmout = 2;
+
 // Variables
+int currentMap = -1;
 float cameraSpeed = 4.5f;
 float cameraMoveBoxSize = 50.0f;
 bool inDebugMode = true;
+bool isDebugWindowOpen = false;
+
 // Arrays and vectors
-std::string mapArray[1]
+std::string mapArray[mapAmout]
 {
-	"Maps/Map1.txt"
+	"Maps/Map1.txt",
+	"Maps/Map2.txt"
 };
+std::vector<Button*> debugWindowButtons;
 std::vector<Enemy*> enemies;
 std::vector<Entity*> enemyBullets;
+
 // Objects
 Player* player = nullptr;
 RenderWindow* mainWindow;
+RenderWindow* debugWindow;
 RenderManager renderer;
 MapLoader mapLoader;
 Map* map = nullptr;
+Clock uiCoolDownTimer;
+Font font("Assets/Fonts/Rodondo.otf");
+
 // Functions
 void UpdateCamera(View* _camera);
+void CheckAdditionalInputs();
 void RunUpdates(RenderWindow* _window, View* _camera);
+void LoadNextLevel();
+void SetupDebugWindow(RenderWindow* _window);
+// Debug Functions
+void DebugToggleDebugView() { inDebugMode = !inDebugMode; }
+void DebugToggleInvincible() { player->ToggleInvincible(); }
 
 
 int main()
 {
+	// Create debug window
+	debugWindow = new RenderWindow(VideoMode({ 640, 640 }), "Debug Window", sf::Style::Titlebar);
+	SetupDebugWindow(debugWindow);
 	// Create the main window
-	mainWindow = new RenderWindow(sf::VideoMode({ 800, 600 }), "SFML window");
+	mainWindow = new RenderWindow(VideoMode({ 800, 600 }), "SFML window");
 	View camera(sf::FloatRect({ 0.f, 0.f }, { 800.0f, 600.0f }));
 
 	player = new Player(mainWindow);
-	map = mapLoader.LoadLevel(mapArray[0], &enemies, mainWindow, player, &enemyBullets);
-	player->SetMapPointer(map);
+	LoadNextLevel();
 
 	camera.zoom(1.2f);
 	mainWindow->setView(camera);
@@ -67,6 +89,19 @@ int main()
 
 		// Display the rendered stuff to the window
 		mainWindow->display();
+
+		// Debug Window Drawing Code
+		if (debugWindow->isOpen())
+		{
+			// Checks to see whether it should be visible or not
+			debugWindow->setVisible(isDebugWindowOpen);
+
+			// Renders
+			debugWindow->clear(Color::Transparent);
+
+			renderer.Draw(debugWindow, &debugWindowButtons);
+			debugWindow->display();
+		}
 	}
 
 	return 0;
@@ -77,15 +112,18 @@ void RunUpdates(RenderWindow* _window, View* _camera)
 {
 	player->Update();
 
+	// enemy updates
 	for (int i = 0; i < enemies.size(); i++)
 	{
 		enemies[i]->Update();
 
+		// Checking bullet collisions
 		for (int j = 0; j < player->m_bullets.size(); j++)
 		{
 			enemies[i]->Collide(player->m_bullets[j]);
 		}
 
+		// Checking if they are dead
 		if (enemies[i]->CheckIfQueuedForDeletion())
 		{
 			Entity* _tempPointer = enemies[i];
@@ -94,24 +132,59 @@ void RunUpdates(RenderWindow* _window, View* _camera)
 		}
 	}
 
+	// Enemy bullet updates
 	for (int i = 0; i < enemyBullets.size(); i++)
 	{
+		// Update and check for collision with player
 		enemyBullets[i]->Update();
 		enemyBullets[i]->Collide(player);
 
+		// Delete when needed
 		if (enemyBullets[i]->CheckIfQueuedForDeletion())
 		{
 			enemyBullets.erase(enemyBullets.begin() + i);
 		}
 	}
 
+	// Player bullets update
 	for (int i = 0; i < player->m_bullets.size(); i++)
 	{
 		player->m_bullets[i]->Update();
 	}
 
+	if (isDebugWindowOpen)
+	{
+		// Player bullets update
+		for (int i = 0; i < debugWindowButtons.size(); i++)
+		{
+			debugWindowButtons.at(i)->ButtonUpdate();
+		}
+	}
+
 	UpdateCamera(_camera);
 	_window->setView(*_camera);
+	CheckAdditionalInputs();
+}
+
+
+void LoadNextLevel()
+{
+	currentMap++;
+	if (currentMap < mapAmout)
+	{
+		map = mapLoader.LoadLevel(mapArray[currentMap], &enemies, mainWindow, player, &enemyBullets);
+		player->SetMapPointer(map);
+	}
+}
+
+
+// Sets up the debug window
+void SetupDebugWindow(RenderWindow* _window)
+{
+	// Creates all the buttons and assigns their functions
+	debugWindowButtons.push_back(new Button(_window, { 256, 64 }, { 128, 48 }, &font, "Next Level", LoadNextLevel));
+	debugWindowButtons.push_back(new Button(_window, { 256, 192 }, { 128, 48 }, &font, "Toggle debug view", DebugToggleDebugView));
+	debugWindowButtons.push_back(new Button(_window, { 256, 320 }, { 128, 48 }, &font, "Toggle invunerability", DebugToggleInvincible));
 }
 
 
@@ -133,5 +206,29 @@ void UpdateCamera(View* _camera)
 	else if (player->getPosition().y < (_camera->getCenter().y - cameraMoveBoxSize))
 	{
 		_camera->move({ 0, -cameraSpeed });
+	}
+}
+
+
+void CheckAdditionalInputs()
+{
+	// Toggles the debug menu when PgUp is pressed
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::PageUp))
+	{
+		if (uiCoolDownTimer.isRunning())
+		{
+			if (uiCoolDownTimer.getElapsedTime().asSeconds() > 0.5f)
+			{
+				isDebugWindowOpen = !isDebugWindowOpen;
+				uiCoolDownTimer.restart();
+			}
+		}
+	}
+
+	// Closes the game when ESC is pressed
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
+	{
+		debugWindow->close();
+		mainWindow->close();
 	}
 }

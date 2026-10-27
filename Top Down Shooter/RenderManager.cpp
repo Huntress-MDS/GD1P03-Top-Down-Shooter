@@ -34,12 +34,12 @@ void RenderManager::Draw(RenderWindow* _window, Map* _currentMap, Player* _playe
 
 
 // Draw inputted buttons
-//void RenderManager::Draw(RenderWindow* _window, std::vector<Button*>* _buttons)
-//{
-//	for (int i = 0; i < _buttons->size(); i++)
-//	{
-//		_window->draw(*_buttons->at(i));
-//		_window->draw(*_buttons->at(i)->m_text);
-//	}
-//}
+void RenderManager::Draw(RenderWindow* _window, std::vector<Button*>* _buttons)
+{
+	for (int i = 0; i < _buttons->size(); i++)
+	{
+		_window->draw(*_buttons->at(i));
+		_window->draw(*_buttons->at(i)->m_text);
+	}
+}
 

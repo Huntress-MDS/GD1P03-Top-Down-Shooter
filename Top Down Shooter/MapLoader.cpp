@@ -41,7 +41,24 @@ Map* MapLoader::LoadLevel(std::string _filePath, std::vector<Enemy*>* _enemies, 
 			if (map->m_mapArray[x][y] == 'x')
 			{
 				// Spawn bocks
-				Tile* newBox = new Tile("Ground", m_tileSize, Vector2f(float(x), float(y)));
+				Tile* newBox = new Tile("Wall", m_tileSize, Vector2f(float(x), float(y)));
+				map->tiles.push_back(newBox);
+			}
+			else if (map->m_mapArray[x][y] == 'g')
+			{
+				// Spawn goal
+				Tile* newBox = new Tile("Goal", m_tileSize, Vector2f(float(x), float(y)));
+				map->tiles.push_back(newBox);
+			}
+			else if (map->m_mapArray[x][y] == 's')
+			{
+				// Move player to starting pos
+				_player->OveridePosition(Vector2f(float(x * m_tileSize), float(y * m_tileSize)));
+			}
+			else if (map->m_mapArray[x][y] == 'p')
+			{
+				// Spawn goal
+				Tile* newBox = new Tile("Pit", m_tileSize, Vector2f(float(x), float(y)));
 				map->tiles.push_back(newBox);
 			}
 			else if (map->m_mapArray[x][y] == 'e')

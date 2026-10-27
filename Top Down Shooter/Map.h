@@ -7,8 +7,8 @@ using namespace sf;
 class Map
 {
 public:
-	const static int m_mapWidth = 50;
-	const static int m_mapHeight = 50;
+	const static int m_mapWidth = 75;
+	const static int m_mapHeight = 75;
 	std::vector<Tile*> tiles;
 	Map();
 	void DisplayMap();

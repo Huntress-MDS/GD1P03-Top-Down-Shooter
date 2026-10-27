@@ -12,41 +12,41 @@ bool Entity::Collide(std::vector<Tile*>* _collisionVector, MOVE_DIRECTION _direc
         case (UP):
             if (_collisionVector->at(i)->CheckIfPointInAreaX(m_position.x + m_hitbox.x - m_hitboxResizer) && _collisionVector->at(i)->CheckIfPointInAreaY(m_position.y - m_hitbox.y))
             {
-                return true;
+                return CheckCollidingTile(_collisionVector, i);
             }
             else if (_collisionVector->at(i)->CheckIfPointInAreaX(m_position.x - m_hitbox.x + m_hitboxResizer) && _collisionVector->at(i)->CheckIfPointInAreaY(m_position.y - m_hitbox.y))
             {
-                return true;
+                return CheckCollidingTile(_collisionVector, i);
             }
             break;
         case (DOWN):
             if (_collisionVector->at(i)->CheckIfPointInAreaX(m_position.x + m_hitbox.x - m_hitboxResizer) && _collisionVector->at(i)->CheckIfPointInAreaY(m_position.y + m_hitbox.y))
             {
-                return true;
+                return CheckCollidingTile(_collisionVector, i);
             }
             else if (_collisionVector->at(i)->CheckIfPointInAreaX(m_position.x - m_hitbox.x + m_hitboxResizer) && _collisionVector->at(i)->CheckIfPointInAreaY(m_position.y + m_hitbox.y))
             {
-                return true;
+                return CheckCollidingTile(_collisionVector, i);
             }
             break;
         case (LEFT):
             if (_collisionVector->at(i)->CheckIfPointInAreaX(m_position.x - m_hitbox.x) && _collisionVector->at(i)->CheckIfPointInAreaY(m_position.y + m_hitbox.y - m_hitboxResizer))
             {
-                return true;
+                return CheckCollidingTile(_collisionVector, i);
             }
             else if (_collisionVector->at(i)->CheckIfPointInAreaX(m_position.x - m_hitbox.x) && _collisionVector->at(i)->CheckIfPointInAreaY(m_position.y - m_hitbox.y + m_hitboxResizer))
             {
-                return true;
+                return CheckCollidingTile(_collisionVector, i);
             }
             break;
         case (RIGHT):
             if (_collisionVector->at(i)->CheckIfPointInAreaX(m_position.x + m_hitbox.x) && _collisionVector->at(i)->CheckIfPointInAreaY(m_position.y + m_hitbox.y - m_hitboxResizer))
             {
-                return true;
+                return CheckCollidingTile(_collisionVector, i);
             }
             else if (_collisionVector->at(i)->CheckIfPointInAreaX(m_position.x + m_hitbox.x) && _collisionVector->at(i)->CheckIfPointInAreaY(m_position.y - m_hitbox.y + m_hitboxResizer))
             {
-                return true;
+                return CheckCollidingTile(_collisionVector, i);
             }
             break;
         }
@@ -85,6 +85,19 @@ bool Entity::Collide(Entity* _entity)
     }
 
     return false;
+}
+
+
+bool Entity::CheckCollidingTile(std::vector<Tile*>* _collisionVector, int _i)
+{
+    if (_collisionVector->at(_i)->GetTileType() == "Wall")
+    {
+        return true;
+    }
+    else if (_collisionVector->at(_i)->GetTileType() == "Goal")
+    {
+        return false;
+    }
 }
 
 
